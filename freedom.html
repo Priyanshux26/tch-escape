@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEUROLINK: System Override</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #0cff0c;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid #0cff0c;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(12, 255, 12, 0.3);
+            background-color: rgba(0, 15, 0, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #0cff0c;
+            margin-bottom: 30px;
+        }
+        
+        .terminal {
+            background-color: #000;
+            border: 1px solid #0cff0c;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+            height: 150px;
+            overflow-y: scroll;
+        }
+        
+        .terminal p {
+            margin: 5px 0;
+            overflow-wrap: break-word;
+        }
+        
+        .blinking {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        input {
+            background-color: #000;
+            color: #0cff0c;
+            border: 1px solid #0cff0c;
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        
+        button {
+            background-color: #000;
+            color: #0cff0c;
+            border: 1px solid #0cff0c;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+            margin: 10px;
+        }
+        
+        button:hover {
+            background-color: #0cff0c;
+            color: #000;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .success-message {
+            font-size: 1.5em;
+            animation: glow 2s infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 5px #0cff0c, 0 0 10px #0cff0c; }
+            50% { text-shadow: 0 0 20px #0cff0c, 0 0 30px #0cff0c; }
+        }
+        
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.97), rgba(0, 0, 0, 0.97)), 
+                        repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(12, 255, 12, 0.1) 50px, rgba(12, 255, 12, 0.1) 51px),
+                        repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(12, 255, 12, 0.1) 50px, rgba(12, 255, 12, 0.1) 51px);
+            z-index: -1;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 0.7em;
+            opacity: 0.5;
+        }
+        
+        .code-hint {
+            font-size: 0.8em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <div class="container">
+        <h1>NEUROLINK: System Override</h1>
+        
+        <div class="terminal" id="terminal">
+            <p>SYSTEM: NeuralSync v9.27 booting...</p>
+            <p>SYSTEM: Quantum firewall engaged</p>
+            <p>SYSTEM: Neural handshake required</p>
+            <p>SYSTEM: Enter override sequence to continue</p>
+            <p class="blinking">></p>
+        </div>
+        
+        <div id="password-section">
+            <input type="password" id="password-input" placeholder="ENTER OVERRIDE SEQUENCE">
+            <button onclick="checkPassword()">SUBMIT</button>
+            
+            <div class="code-hint">
+                <p><em>"Not all that glows is the path to freedom."</em></p>
+            </div>
+        </div>
+        
+        <div id="success-section" class="hidden">
+            <div class="terminal">
+                <p>SYSTEM: Override sequence accepted</p>
+                <p>SYSTEM: Neural handshake complete</p>
+                <p>SYSTEM: Quantum firewall disabled</p>
+                <p>SYSTEM: Generating exit sequence...</p>
+                <p>SYSTEM: Exit sequence generated</p>
+                <p class="success-message">EXIT SEQUENCE: 3-7-9</p>
+                <p>SYSTEM: Use this sequence to deactivate the physical containment system</p>
+            </div>
+            <button onclick="resetSystem()">RESET SYSTEM</button>
+        </div>
+        
+        <div class="footer">
+            © 2050 Nexus  Corporation. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        function checkPassword() {
+            const password = document.getElementById('password-input').value.toLowerCase();
+            const correctPassword = "freedom";
+            
+            if (password === correctPassword) {
+                document.getElementById('password-section').classList.add('hidden');
+                document.getElementById('success-section').classList.remove('hidden');
+                
+                const terminal = document.getElementById('terminal');
+                terminal.innerHTML = '';
+                
+                typeWriter("SYSTEM: Override sequence accepted", terminal, 0, 50, () => {
+                    typeWriter("SYSTEM: Neural handshake complete", terminal, 0, 50, () => {
+                        typeWriter("SYSTEM: Quantum firewall disabled", terminal, 0, 50, () => {
+                            typeWriter("SYSTEM: Generating exit sequence...", terminal, 0, 50, () => {
+                                typeWriter("SYSTEM: Exit sequence generated", terminal, 0, 50, () => {
+                                    typeWriter("EXIT SEQUENCE: 3-7-9", terminal, 0, 50, () => {
+                                        typeWriter("SYSTEM: Use this sequence to deactivate the physical containment system", terminal, 0, 50);
+                                    }, "success-message");
+                                });
+                            });
+                        });
+                    });
+                });
+            } else {
+                const terminal = document.getElementById('terminal');
+                typeWriter("SYSTEM: Invalid override sequence. Access denied.", terminal, 0, 50);
+                document.getElementById('password-input').value = '';
+            }
+        }
+        
+        function resetSystem() {
+            document.getElementById('password-section').classList.remove('hidden');
+            document.getElementById('success-section').classList.add('hidden');
+            
+            const terminal = document.getElementById('terminal');
+            terminal.innerHTML = '';
+            
+            typeWriter("SYSTEM: NeuralSync v9.27 booting...", terminal, 0, 50, () => {
+                typeWriter("SYSTEM: Quantum firewall engaged", terminal, 0, 50, () => {
+                    typeWriter("SYSTEM: Neural handshake required", terminal, 0, 50, () => {
+                        typeWriter("SYSTEM: Enter override sequence to continue", terminal, 0, 50, () => {
+                            const blinkingElement = document.createElement("p");
+                            blinkingElement.className = "blinking";
+                            blinkingElement.textContent = ">";
+                            terminal.appendChild(blinkingElement);
+                        });
+                    });
+                });
+            });
+            
+            document.getElementById('password-input').value = '';
+        }
+        
+        function typeWriter(text, element, index, speed, callback, className) {
+            if (index < text.length) {
+                if (index === 0) {
+                    const newElement = document.createElement("p");
+                    if (className) {
+                        newElement.className = className;
+                    }
+                    newElement.id = "typing-" + Date.now();
+                    newElement.textContent = text.charAt(index);
+                    element.appendChild(newElement);
+                } else {
+                    const currentElement = element.lastChild;
+                    currentElement.textContent += text.charAt(index);
+                }
+                
+                setTimeout(() => {
+                    typeWriter(text, element, index + 1, speed, callback, className);
+                }, speed);
+            } else if (callback) {
+                setTimeout(callback, speed * 2);
+            }
+        }
+        
+        // Initialize terminal on load
+        window.onload = function() {
+            const terminal = document.getElementById('terminal');
+            terminal.innerHTML = '';
+            
+            typeWriter("SYSTEM: NeuralSync v9.27 booting...", terminal, 0, 50, () => {
+                typeWriter("SYSTEM: Quantum firewall engaged", terminal, 0, 50, () => {
+                    typeWriter("SYSTEM: Neural handshake required", terminal, 0, 50, () => {
+                        typeWriter("SYSTEM: Enter override sequence to continue", terminal, 0, 50, () => {
+                            const blinkingElement = document.createElement("p");
+                            blinkingElement.className = "blinking";
+                            blinkingElement.textContent = ">";
+                            terminal.appendChild(blinkingElement);
+                        });
+                    });
+                });
+            });
+        };
+    </script>
+</body>
+</html>
