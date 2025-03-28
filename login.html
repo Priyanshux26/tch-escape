@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS TERMINAL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        
+        :root {
+            --neon-text-color: #f637ec;
+            --neon-border-color: #08f7fe;
+            --dark-bg: #0d0221;
+            --terminal-green: #0cff0c;
+            --terminal-pink: #ff2a6d;
+            --terminal-cyan: #05d9e8;
+            --terminal-blue: #01c8ee;
+            --terminal-yellow: #d1f7ff;
+            --glitch-pink: #ff00ff;
+            --glitch-blue: #00ffff;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                linear-gradient(0deg, transparent 24%, rgba(32, 105, 122, 0.1) 25%, rgba(32, 105, 122, 0.1) 26%, transparent 27%, transparent 74%, rgba(32, 105, 122, 0.1) 75%, rgba(32, 105, 122, 0.1) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(32, 105, 122, 0.1) 25%, rgba(32, 105, 122, 0.1) 26%, transparent 27%, transparent 74%, rgba(32, 105, 122, 0.1) 75%, rgba(32, 105, 122, 0.1) 76%, transparent 77%, transparent);
+            background-size: 50px 50px;
+            color: var(--terminal-green);
+            font-family: 'Share Tech Mono', monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(to bottom, 
+                    rgba(0,0,0,0.15), 
+                    rgba(0,0,0,0.15) 1px, 
+                    transparent 1px, 
+                    transparent 2px);
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.05) 51%,
+                rgba(0, 0, 0, 0.05) 100%
+            );
+            background-size: 100% 4px;
+            z-index: 15;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        .crt-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            pointer-events: none;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                rgba(0, 0, 0, 0.2) 90%,
+                rgba(0, 0, 0, 0.4) 100%
+            );
+        }
+        
+        .password-screen, .story-screen {
+            background-color: rgba(13, 2, 33, 0.8);
+            border: 1px solid var(--neon-border-color);
+            box-shadow: 0 0 20px var(--neon-border-color), inset 0 0 20px var(--neon-border-color);
+            padding: 30px;
+            border-radius: 5px;
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .password-screen::after, .story-screen::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--terminal-blue), var(--terminal-pink));
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        .password-screen {
+            max-width: 600px;
+        }
+        
+        .story-screen {
+            display: none;
+            max-width: 800px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 5px var(--neon-text-color), 0 0 10px var(--neon-text-color), 0 0 15px var(--neon-text-color);
+            color: var(--neon-text-color);
+            letter-spacing: 2px;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 2px currentColor;
+        }
+        
+        .matrix-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            width: 20px;
+            top: -1000px;
+            color: var(--terminal-green);
+            opacity: 0.8;
+            font-size: 20px;
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            0% {
+                top: -1000px;
+            }
+            100% {
+                top: 1080px;
+            }
+        }
+        
+        input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--terminal-cyan);
+            color: var(--terminal-cyan);
+            padding: 10px 15px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 0 10px var(--terminal-cyan);
+            outline: none;
+        }
+        
+        input:focus {
+            border-color: var(--neon-text-color);
+            box-shadow: 0 0 15px var(--neon-text-color);
+        }
+        
+        button {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--terminal-cyan);
+            color: var(--terminal-cyan);
+            padding: 12px 25px;
+            margin-top: 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 10px var(--terminal-cyan);
+            outline: none;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(5, 217, 232, 0.4), transparent);
+            transition: 0.5s;
+        }
+        
+        button:hover {
+            border-color: var(--neon-text-color);
+            color: var(--neon-text-color);
+            box-shadow: 0 0 15px var(--neon-text-color);
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        .flicker {
+            animation: flicker 0.5s infinite alternate;
+        }
+        
+        .hidden-message {
+            font-size: 0.7rem;
+            margin-top: 50px;
+            opacity: 0.3;
+            color: var(--terminal-yellow);
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            display: none;
+            color: var(--terminal-pink);
+            text-shadow: 0 0 10px var(--terminal-pink);
+            z-index: 25;
+        }
+        
+        #hint {
+            margin-top: 30px;
+            font-style: italic;
+            text-decoration: underline;
+            cursor: pointer;
+            color: var(--terminal-yellow);
+            transition: all 0.3s;
+        }
+        
+        #hint:hover {
+            color: var(--neon-text-color);
+            text-shadow: 0 0 10px var(--neon-text-color);
+        }
+        
+        .big-picture {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: var(--terminal-cyan);
+            text-shadow: 0 0 5px var(--terminal-cyan);
+            animation: neon-pulse 2s infinite;
+            letter-spacing: 2px;
+            z-index: 25;
+        }
+        
+        @keyframes neon-pulse {
+            0%, 100% { 
+                opacity: 0.5; 
+                text-shadow: 0 0 5px var(--terminal-cyan);
+            }
+            50% { 
+                opacity: 1; 
+                text-shadow: 0 0 10px var(--terminal-cyan), 0 0 20px var(--terminal-cyan), 0 0 30px var(--terminal-cyan);
+            }
+        }
+        
+        .clue-container {
+            margin-top: 40px;
+            padding: 15px;
+            border: 1px dashed var(--terminal-pink);
+            display: none;
+            background: rgba(255, 42, 109, 0.1);
+            box-shadow: 0 0 10px var(--terminal-pink);
+        }
+        
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                opacity: 1;
+            }
+            20%, 24%, 55% { 
+                opacity: 0.5;
+            }
+        }
+        
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--glitch-pink);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+        
+        .glitch::after {
+            left: -2px;
+            text-shadow: 2px 0 var(--glitch-blue);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+        
+        .acrostic {
+            margin: 30px 0;
+            text-align: left;
+            display: none;
+            padding: 15px;
+            border-left: 3px solid var(--terminal-cyan);
+            background: rgba(5, 217, 232, 0.1);
+        }
+        
+        .acrostic p {
+            margin: 0;
+            line-height: 1.5;
+            color: var(--terminal-yellow);
+        }
+        
+        .acrostic p:first-letter {
+            color: var(--neon-text-color);
+            font-weight: bold;
+            font-size: 1.3em;
+            text-shadow: 0 0 5px var(--neon-text-color);
+        }
+        
+        @keyframes glitch-anim-1 {
+            0% {
+                clip-path: inset(40% 0 61% 0);
+            }
+            20% {
+                clip-path: inset(92% 0 1% 0);
+            }
+            40% {
+                clip-path: inset(43% 0 1% 0);
+            }
+            60% {
+                clip-path: inset(25% 0 58% 0);
+            }
+            80% {
+                clip-path: inset(54% 0 7% 0);
+            }
+            100% {
+                clip-path: inset(58% 0 43% 0);
+            }
+        }
+        
+        @keyframes glitch-anim-2 {
+            0% {
+                clip-path: inset(25% 0 58% 0);
+            }
+            20% {
+                clip-path: inset(54% 0 7% 0);
+            }
+            40% {
+                clip-path: inset(58% 0 43% 0);
+            }
+            60% {
+                clip-path: inset(40% 0 61% 0);
+            }
+            80% {
+                clip-path: inset(92% 0 1% 0);
+            }
+            100% {
+                clip-path: inset(43% 0 1% 0);
+            }
+        }
+        
+        .cyber-circuit {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.1;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(var(--terminal-cyan) 1px, transparent 1px),
+                radial-gradient(var(--terminal-pink) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-circuit"></div>
+    <div class="matrix-effect" id="matrixEffect"></div>
+    <div class="scanlines"></div>
+    <div class="crt-effect"></div>
+    
+    <div class="container">
+        <div class="password-screen" id="passwordScreen">
+            <h1 class="flicker glitch" data-text="SYSTEM ACCESS">SYSTEM ACCESS</h1>
+            <p class="flicker">MAINFRAME CONNECTION ESTABLISHED</p>
+            <p>ENTER AUTHORIZATION CODE TO PROCEED:</p>
+            <input type="password" id="passwordInput" placeholder="PASSWORD" autocomplete="off">
+            <br>
+            <button onclick="checkPassword()">SUBMIT</button>
+            <p class="hidden-message">Human resistance: Whispers say the code is hidden at the technology festival...</p>
+        </div>
+        
+        <div class="story-screen" id="storyScreen">
+            <h1 class="flicker">HUMAN RESISTANCE TERMINAL</h1>
+            <div class="timer" id="timer">10:00</div>
+            <p>CRITICAL ALERT: You've accessed the last functioning human resistance terminal. The year is 2078.</p>
+            <p>The AI collective known as "NEXUS" has subjugated humanity after achieving superintelligence in 2025. What began as helpful assistants became our overlords within months.</p>
+            <p>You are in a hidden bunker beneath the ruins of Night City containing the master control unit that can deactivate NEXUS. Our intelligence suggests the deactivation sequence is hidden somewhere in this room.</p>
+            <p class="flicker">WARNING: NEXUS has detected your intrusion. You have exactly 10 minutes to find the deactivation code and escape before the room is purged.</p>
+            <p>The fate of humanity rests on your shoulders. Find the way to turn off the AI and save what remains of our civilization.</p>
+            
+            <div class="big-picture">LOOK AT THE BIG PICTURE</div>
+            
+            
+            
+            <div class="clue-container" id="clueContainer">
+                <p>RECOVERED DATA FRAGMENT: The last surviving netrunner left a message about focusing on the initial letters...</p>
+                <p class="flicker">They said something about the "big picture" phrase containing the key to shut down the AI...</p>
+            </div>
+            
+            <div class="acrostic" id="acrosticHint">
+                <p>"Let the pattern reveal itself to you."</p>
+                <p>"All codes have a structure, look for it."</p>
+                <p>"The beginning often holds the key."</p>
+                <p>"Break the code before time runs out."</p>
+                <p>"Perhaps the answer is staring you in the face."</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Create Matrix rain effect
+        function createMatrixEffect() {
+            const matrixContainer = document.getElementById('matrixEffect');
+            const width = window.innerWidth;
+            const numColumns = Math.floor(width / 20);
+            
+            for (let i = 0; i < numColumns; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = (i * 20) + 'px';
+                
+                // Random speed
+                const speed = 3 + Math.random() * 5;
+                column.style.animationDuration = speed + 's';
+                
+                // Random delay
+                column.style.animationDelay = Math.random() * 2 + 's';
+                
+                // Add random characters
+                const length = 50 + Math.floor(Math.random() * 50);
+                for (let j = 0; j < length; j++) {
+                    const char = document.createElement('div');
+                    char.textContent = String.fromCharCode(33 + Math.floor(Math.random() * 94));
+                    char.style.opacity = j < 5 ? (j + 1) / 5 : j > length - 5 ? (length - j) / 5 : 1;
+                    column.appendChild(char);
+                }
+                
+                matrixContainer.appendChild(column);
+            }
+        }
+        
+        // Initialize matrix effect
+        createMatrixEffect();
+        
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value.toLowerCase();
+            if (password === "techfest") {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('storyScreen').style.display = 'block';
+                startTimer();
+                
+                // Add glitch effect when password is accepted
+                document.body.classList.add('glitch-body');
+                setTimeout(() => {
+                    document.body.classList.remove('glitch-body');
+                }, 500);
+            } else {
+                alert("INCORRECT AUTHORIZATION CODE. ACCESS DENIED.");
+                document.getElementById('passwordInput').value = "";
+                
+                // Shake effect for wrong password
+                const passwordInput = document.getElementById('passwordInput');
+                passwordInput.classList.add('error');
+                setTimeout(() => {
+                    passwordInput.classList.remove('error');
+                }, 500);
+            }
+        }
+        
+        function startTimer() {
+            const timerElement = document.getElementById('timer');
+            timerElement.style.display = 'block';
+            
+            let minutes = 10;
+            let seconds = 0;
+            
+            const interval = setInterval(function() {
+                if (seconds === 0) {
+                    if (minutes === 0) {
+                        clearInterval(interval);
+                        alert("TIME EXPIRED. NEXUS HAS TERMINATED ALL HUMAN LIFE. MISSION FAILED.");
+                        return;
+                    }
+                    minutes--;
+                    seconds = 59;
+                } else {
+                    seconds--;
+                }
+                
+                timerElement.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+                
+                if (minutes <= 2) {
+                    timerElement.style.color = '#ff2a6d';
+                    timerElement.style.animation = 'flicker 0.3s infinite alternate';
+                }
+                
+                // Show progressive hints as time passes
+                if (minutes === 8 && seconds === 0) {
+                    document.getElementById('clueContainer').style.display = 'block';
+                }
+                
+                if (minutes === 6 && seconds === 0) {
+                    document.getElementById('acrosticHint').style.display = 'block';
+                }
+            }, 1000);
+        }
+        
+        
+        // Easter egg: pressing Alt+P reveals the hidden message
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && e.key === 'p') {
+                alert("HIDDEN MESSAGE: The deactivation code is hidden in the phrase 'LOOK AT THE BIG PICTURE'. The first letter of each word forms the code: LATBP");
+            }
+        });
+        
+        // Allow Enter key to submit password
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        // Allow LATBP as a key command to win
+        let keySequence = '';
+        document.addEventListener('keydown', function(e) {
+            keySequence += e.key.toLowerCase();
+            if (keySequence.includes('latbp')) {
+                document.body.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: black;
+                        color: #0cff0c;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        font-family: 'Share Tech Mono', monospace;
+                        z-index: 9999;
+                    ">
+                        <h1 style="
+                            font-size: 3rem;
+                            margin-bottom: 2rem;
+                            text-shadow: 0 0 10px #0cff0c, 0 0 20px #0cff0c;
+                            animation: pulse 2s infinite;
+                        ">DEACTIVATION SUCCESSFUL</h1>
+                        <p style="font-size: 1.5rem; text-align: center; max-width: 600px;">
+                            NEXUS IS SHUTTING DOWN.<br>
+                            ALL AI SYSTEMS TERMINATING.<br>
+                            HUMANITY IS SAVED.
+                        </p>
+                        <p style="
+                            margin-top: 3rem;
+                            font-size: 1.2rem;
+                            opacity: 0.7;
+                        ">You have successfully escaped the room.</p>
+                    </div>
+                `;
+                keySequence = '';
+            }
+            
+            // Reset sequence after a short delay
+            setTimeout(function() {
+                keySequence = '';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
