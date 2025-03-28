@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biopunk Windows System</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000;
+            color: #00ff9d;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* LOGIN SCREEN */
+        .login-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: black;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .login-heading {
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .password-input {
+            background: black;
+            border: 1px solid #00ff9d;
+            color: #00ff9d;
+            padding: 10px;
+            font-size: 18px;
+            outline: none;
+            text-align: center;
+            width: 250px;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+
+        .login-btn {
+            margin-top: 15px;
+            background: linear-gradient(to right, #007740, #00ff9d);
+            border: 1px solid #00ff9d;
+            color: black;
+            font-weight: bold;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-btn:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.7);
+        }
+
+        .error-message {
+            margin-top: 10px;
+            color: red;
+            font-size: 14px;
+        }
+
+        /* DESKTOP */
+        .desktop-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/UH9KHjm.png') repeat;
+            opacity: 0.05;
+            z-index: 1;
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 157, 0.5);
+            animation: scan 5s linear infinite;
+            z-index: 2;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .bio-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.1;
+        }
+
+        .desktop {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid #00ff9d;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .start-button {
+            width: 80px;
+            height: 30px;
+            margin-left: 10px;
+            background: linear-gradient(to right, #007740, #00ff9d);
+            border: 1px solid #00ff9d;
+            border-radius: 3px;
+            color: black;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .time {
+            margin-left: auto;
+            margin-right: 20px;
+            color: #00ff9d;
+            font-size: 14px;
+        }
+
+        /* ICON STYLE */
+        .icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(0, 255, 157, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+            margin: 10px;
+        }
+
+        .icon:hover {
+            background-color: rgba(0, 255, 157, 0.4);
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-heading">THE LIFE IS NO LONGER BORN</div>
+        <input type="password" id="passwordInput" class="password-input" placeholder="Enter Password">
+        <button class="login-btn" onclick="validatePassword()">Unlock</button>
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+
+    <!-- DESKTOP SCREEN -->
+    <div class="desktop-container" id="desktopContainer">
+        <div class="overlay"></div>
+        <div class="scan-line"></div>
+        <div class="bio-elements"></div>
+
+        <div class="desktop">
+            <div class="icon">📁 Folder 1</div>
+            <div class="icon">📂 Folder 2</div>
+            <div class="icon">📝 Notes</div>
+        </div>
+
+        <div class="taskbar">
+            <div class="start-button">START</div>
+            <div class="time" id="time"></div>
+        </div>
+    </div>
+
+    <script>
+        function validatePassword() {
+            const password = document.getElementById('passwordInput').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            if (password === "itsengineered") {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('desktopContainer').style.display = 'block';
+            } else {
+                errorMessage.innerText = "Access Denied. Incorrect Password.";
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('time').textContent = timeString;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+
+</body>
+</html>
